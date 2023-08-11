@@ -1,0 +1,251 @@
+<link rel="stylesheet" href="C:\Users\19165\Documents\Custom Wx Forecast\5day\7day.css">
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<base href="../">
+		<title>Weather Forecast Generator</title>
+		<link rel="stylesheet" type="text/css" href="pageheader.css"></link>
+		<link id="class_name" rel="stylesheet" href="5day/7day_canvas.css">
+		<meta name="author" content="Kyle Gentry">
+		<meta name="description" content="Create a custom weather forecast of variable length, either 5 days or 7 days.">
+		<meta name="keywords" content="Weather, Forecast, Forecaster, 5day, 7day, Generator, custom">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<meta charset="UTF-8">
+		<style>
+
+		</style>
+	</head>
+	<body onload="random_forecast(); random_bg_color(); lsload(); process_urlparams();">
+		<h1 id="header">Weather Forecast Generator</h1>
+		<div style="text-align:left;font-style:italic;color:pink;font-size:0.9em;margin:5px">
+			* Not working right for you? Try the legacy version instead: <a href="5day/forecast_legacy.html">Click here</a> *
+		</div>
+		<div id="globaloptions">
+			<!-- LANGUAGE -->
+			<div id="languagebox">
+				<!-- <button onclick="screenreport()">Screen Report</button><br /> -->
+				<fieldset>
+					<legend>Language Select:</legend>
+					<button id="lang_left" onClick="chg_lang(-1)">&lt;</button>
+					<img id="lang_selection" src="5day/lang_en.svg" title="English" style="vertical-align:middle;">
+					<button id="lang_right" onClick="chg_lang(1)">&gt;</button>
+				</fieldset>
+
+			</div>
+			<!-- FORECAST LENGTH -->
+			<div>
+				<fieldset>
+					<legend>Forecast Length:</legend>
+					<input id="frcstQty5" type="radio" name="frcstlength" value=5 onChange="forecastDayQty(this.value);">
+					<label for="frcstQty5">5 Days</label>
+					<br />
+					<input id="frcstQty7" type="radio" name="frcstlength" value=7 onChange="forecastDayQty(this.value);" checked>
+					<label for="frcstQty7">7 Days</label>
+				</fieldset>
+			</div>
+			<!-- BACKGROUND COLOR -->
+			<div>
+				<fieldset>
+					<legend>Background Color:</legend>
+					<input id="mainbgcolor" type="color" value="#27688D" onInput="chg_bg(this.value);">
+					<label for="mainbgcolor" style="display:none;">Background Color</label>
+					<br />
+					<button onclick="random_bg_color();">Randomize</button>
+				</fieldset>
+			</div>
+			<!-- RANDOM FORECAST -->
+			<div>
+				<fieldset>
+					<legend>Temperature Units:</legend>
+					<input type="radio" name="tempunits" id="input-tempF" value="F" onChange="prop.tempUnits = 'F'; convert_temps();" checked>
+					<label for="tempF">&deg;F</label>
+					<input type="radio" name="tempunits" id="input-tempC" value="C" onChange="prop.tempUnits = 'C'; convert_temps();">
+					<label for="tempC">&deg;C</label>
+					<br />
+					<button onClick="random_forecast();" title="Time-of-year based random temperatures">Randomize<br />Forecast</button>
+				</fieldset>
+			</div>
+			<!-- HEMISPHERE / FIRST DAY OF WEEK -->
+			<div>
+				<label for="hemisphere">Hemisphere Select:</label><br />
+				<select id="hemisphere" onchange="prop.hemisphere = this.value; random_forecast();" title="Hemisphere-based generated temperatures">
+					<option value="N">Northern</option>
+					<option value="S">Southern</option>
+				</select>
+				<br />
+				<label for="firstday">First Day of Week:</label><br />
+				<select id="firstday" onChange="chg_day(this.value);">
+					<option value="0">SUN</option>
+					<option value="1">MON</option>
+					<option value="2">TUE</option>
+					<option value="3">WED</option>
+					<option value="4">THU</option>
+					<option value="5">FRI</option>
+					<option value="6">SAT</option>
+				</select>
+			</div>
+		</div>
+		<hr color="gray" />
+		<div id="container">
+			<canvas id="forecast" width="1000" height="500"></canvas>
+			<div id="forecast-portrait">
+				Please use in landscape mode. Optimal use of this site occurs with a laptop, desktop, or tablet.
+			</div>
+			<canvas id="forecast_img" width="1008" height="504" style="display:none;"></canvas>
+		</div>
+		<div id="forecast-names">
+			<table id="title-modes">
+				<caption class="titleopt">
+					Title Display Modes:
+				</caption>
+				<tr>
+					<td>
+						<input id="titleboth" type="radio" name="titleopt" checked onClick='chg_title_mode("both")'>
+						<label for="titlestandard">Standard</label>
+					</td>
+					<td>
+						<input id="titlename" type="radio" name="titleopt" onClick='chg_title_mode("name")'>
+						<label for="titlenameonly">No City</label>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input id="titlecity" type="radio" name="titleopt" onClick='chg_title_mode("city")'>
+						<label for="titlecityonly">No Name</label>
+					</td>
+					<td>
+						<input id="titlecustom" type="radio" name="titleopt" onClick='chg_title_mode("custom")'>
+						<label for="titlecustom">Custom</label>
+					</td>
+				</tr>
+			</table>
+			<div id="title-display-options">
+				<div><span class="titleopt">Title Display Options:</span></div>
+				<div id="nameentrydiv">
+					<label for="nameentry">Name:</label>
+					<input id="nameentry" maxlength="15" placeholder="Your Name (15 Chars)" onInput="draw();">
+				</div>
+				<div id="cityentrydiv">
+					<label for="cityentry">City:</label>
+					<input id="cityentry" maxlength="15" placeholder="City (15 Chars)" onInput="draw();">
+				</div>
+				<div id="customtitlediv" style="display:none;">
+					<label for="customentry">Custom:</label>
+					<input id="customentry" placeholder="Custom Entry (max: 60 chars)" maxlength="60" onInput="draw();" style="width:60%;">
+				</div>
+			</div>
+			<div id="save-the-canvas">
+				<fieldset>
+					<legend class="titleopt">Save Forecast As Image</legend>
+					<label for="savesize">Size:</label> 
+					<select id="savesize">
+						<option value="720x360">720 x 360</option>
+						<option value="960x480">960 x 480</option>
+						<option value="1008x504" selected>1008 x 504</option>
+						<option value="1600x800">1600 x 800</option>
+					</select><br />
+					<label for="savename">Name:</label> 
+					<input id="savename"><br />
+					<a id="saveimg" href="" onClick="saveimg();">Save Image</a>
+				</fieldset>
+			</div>			
+		</div>
+		<div id="param-save">
+			<div id="param-save-checks">
+				<label for="save-lang">
+					<input onclick="lschange()" type="checkbox" id="save-lang" />
+					Save Language
+				</label>
+				<label for="save-bg">
+					<input onclick="lschange()" type="checkbox" id="save-bg" />
+					Save BG color
+				</label>
+				<label for="save-firstday">
+					<input onclick="lschange()" type="checkbox" id="save-firstday" />
+					Save Day Order
+				</label>
+				<label for="save-prcp">
+					<input onclick="lschange()" type="checkbox" id="save-prcp" />
+					Save PRCP
+				</label>
+				<label for="save-uvi">
+					<input onclick="lschange()" type="checkbox" id="save-uvi" />
+					Save UVI
+				</label>
+				<label for="save-wind">
+					<input onclick="lschange()" type="checkbox" id="save-wind" />
+					Save Wind
+				</label>
+				<label for="save-temps">
+					<input onclick="lschange()" type="checkbox" id="save-temps" />
+					Save Temperatures
+				</label>
+			</div>
+			<button id="param-save-button" onclick="save_urlparams()">
+				Click to reload page with current settings
+			</button>
+			<span>* This will reload the page with the current name, city, and selected temperature unit, day quantity (5 or 7), and hemisphere. Use the check buttons above to optionally save the items described. The new page can then be bookmarked to reference with those preferred settings in-tact.
+		</div>
+		<div id="forecast-modify">
+
+		</div>
+		<div id="about">
+
+			<p><span>Brief update history:</span>
+				<ul>
+					<li>JUN 2023: At a user's request, the ability to remember common variables was added. The page that loads with those options can be bookmarked to visit and automatically load later.</li>
+					<li>NOV 2022: Improved random background color creation; Added additional sky condition imagery; introduced a skycast algorithm</li>
+					<li>31 AUG 2021: Fixed issue preventing 5-day forecast use on smartphones</li>
+					<li>27 MAY 2021: Improved canvas size logic and dynamics</li>
+					<li>27 JAN 2021: Implementation of canvas functionality; hemisphere/seasonal random-temperature algorithm; and more</li>
+					<li>17 DEC 2020: Forecast languages supported: English, French, Spanish</li>
+					<li>16 NOV 2020: Added extra icons; wind functionality</li>
+					<li>07 MAY 2020: Choose between 5 or 7 day forecasts; interactive canvas</li>
+				</ul>
+			<p>
+				<table style="margin:0 auto;width:80%;text-align:center;">
+					<caption><b><u>How to change features</u></b></caption>
+					<caption><i>* Click/tap on the canvas to modify sky condition, descriptors, and UVI (if toggled)*</i></caption>
+					<t
+					<tr>
+						<td><img src="5day/example-sky.jpg" style="width:100%"></td>
+						<td><img src="5day/example-descr.jpg" style="width:100%"></td>
+						<td><img src="5day/example-uvi.jpg" style="width:100%"></td>
+					</tr>
+					<tr>
+						<td>Cycle thru sky conditions</td>
+						<td>Cycle thru descriptors</td>
+						<td>Select/change the UVI</td>
+					</tr>
+				</table>
+			</p>
+			<hr />
+			<p>Use this forecast generator to make/publish/share your own predictions. If you like forecasting, it's a nice simple way of making a graphical representation for your audience/peers. Parents and/or teachers can use it to assist their kids to make their own forecasts, and who knows, maybe spark an interest in science or meteorology.</p>
+			<p>Thank you for your feedback as well. In general, much of the functionality is influenced by user-feedback/requests which has allowed me an opportunity to expand my programming understanding. It is humbling to know that something I've made and worked at for a long time has benefited others.</p>
+			<p>Thanks to <a href="https://goalkicker.com">GoalKicker.com</a> for some very useful guides on programming (HTML5, Canvas, JS, CSS guides assisted here).
+			<p><span>* TERMS OF USE</span>:
+				<ul>
+					<li>The imagery you create with this generator can be used however you'd like. No attribution necessary/expected.</li>
+					<li>The programming code itself may be used as long as you include attribution.</li>
+				</ul>
+			</p>
+		</div>
+
+		<div id="footer"></div>
+		<script src="header.js"></script>
+		<script src="footer.js"></script>
+		<script src="5day/7day_canvas_populate.js"></script>
+		<script src="5day/7day_canvas.js"></script>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

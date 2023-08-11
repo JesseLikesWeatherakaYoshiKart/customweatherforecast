@@ -1,0 +1,230 @@
+@import url("https://fonts.googleapis.com/css2?family=Rambla:wght@700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Rambla', sans-serif;
+}
+#container {
+	width: 100%;
+	position: relative;
+	margin: 0 auto;
+	text-align: center;
+}
+
+canvas {
+	background-color: darkgray;
+	border: 1px solid black;
+	margin-bottom: 5px;
+}
+
+/* GLOBAL FORECAST OPTIONS */
+#globaloptions {
+	display:flex;
+	font-family: Rambla;
+	width: 100%;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin:0 auto;
+	margin-bottom: 5px;
+}
+#globaloptions div {
+	text-align: center;
+	flex-grow: 1;
+}
+/* everything border-right except last */
+#globaloptions div:nth-last-child(n+2) {
+	border-right: 1px solid white;
+}
+
+fieldset {
+	border: none;
+}
+
+#forecast-portrait {
+	background-color: green;
+	font-size: 2em;
+	font-weight: bold;
+	width: 90vw;
+	padding: 3em 2em;
+	text-shadow:
+		1vw   1vw 3vw black,
+		1vw   0vw 3vw black,
+		1vw  -1vw 3vw black,
+		0vw  -1vw 3vw black,
+		-1vw -1vw 3vw black,
+		-1vw  0vw 3vw black,
+		-1vw  1vw 3vw black,
+		0vw   1vw 3vw black
+	;
+}
+
+@media (orientation: landscape) or (
+	(orientation: portrait) and
+	(min-width: 500px)
+) {
+	#forecast {display: inline;}
+	#forecast-portrait {display: none;}
+}
+@media (orientation: portrait) and (max-width: 499px) {
+	#forecast {display: none;}
+	#forecast-portrait {display: block;}
+}
+
+/* FORECAST MODIFICATION OPTIONS */
+#forecast-names {
+	display:flex;
+	font-family: Rambla;
+	width: 100%;
+	font-size: 0.9em;
+	flex-direction: row;
+	justify-content: center;
+	margin: 0 auto;
+	margin-bottom: 10px;
+	vertical-align: middle;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	line-height: 20px;
+}
+
+#forecast-names > div {
+	text-align: center;
+}
+#forecast-names > div:nth-last-child(n+2) {
+	border-right: 1px solid white;
+}
+#forecast-names > table:nth-last-child(n+2) {
+	border-right: 1px solid white;
+}
+/* Title Display "Row" */
+#title-modes {
+	 border-collapse:collapse;
+	 width: 30%;
+}
+#title-display-options {
+	width: 40%;
+}
+#title-display-options input {
+	width: 70%;
+	font-size: 1.3em;
+}
+#save-the-canvas {
+	width: 30%;
+}
+.toggle-container {
+	display:flex;
+}
+.toggle-button {
+	display: inline-block;
+	text-align: center;
+	font: normal 1.7em sans-serif;
+	background-color: gray;
+	color: rgb(40, 40, 40);
+	width: 62px;
+	height: 26px;
+	line-height: 26px;
+	border: 4px solid rgb(50, 50, 50);
+}
+
+.toggle-button.activated {
+	background-color: lawngreen;
+	box-shadow: 0px 0px 12px 1px lawngreen;
+	border: 4px solid rgb(0,140,0);
+	font-weight: bold;
+	color: black;
+}
+
+#forecast-modify {
+	display:flex;
+	font-family: Rambla;
+	font-size: 0.8em;
+	width: 100%;
+	flex-direction: row;
+	justify-content: center;
+	border:1px solid white;
+	user-select: none;
+}
+.edit-day {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	border-right: 1px solid gray;
+	align-items: center;
+	text-align: center;
+	padding-bottom: 20px;
+	line-height: 20px;
+}
+
+.globalopt {
+	font-weight: bold;
+	text-decoration: underline;
+	font-size: 0.8em;
+}
+.titleopt {
+	font-weight: bold;
+	text-decoration: underline;
+}
+.optdaydisp {
+	font-weight: bold;
+	text-decoration: underline;
+}
+.optvariable {
+	text-decoration: underline;
+}
+.percinsert {
+	width: 80%;
+	background-color: rgb(170,230,170);
+	text-align: center;
+	color: black;
+	font-size: 2em;
+}
+.tempinsert {
+	width: 80%;
+	max-width: 100px;
+	color: black;
+	text-align: center;
+	font-size: 3em;
+}
+.zxcv {
+	border: 1px solid white;
+	width: 100px;
+	height: 100px;
+}
+#about {
+	width: 80%;
+	margin: 0 auto;
+	color: lightgray;
+	font-family: sans-serif;
+}
+#about span {
+	color: white;
+	font-style: italic;
+	font-weight: bold;
+}
+#param-save {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	margin: 0 auto;
+	margin-bottom: 1em;
+	text-align: center;
+}
+#param-save span {
+	font-size: 0.9em;
+	font-style: italic;
+	width: 85%;
+	text-align: justify;
+}
+#param-save-checks {
+	display: flex;
+	flex-wrap: wrap;
+}
+#param-save-checks label {
+	margin: 0 2em;
+	flex-grow: 1;
+}
